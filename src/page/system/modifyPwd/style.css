@@ -1,0 +1,15 @@
+.p-modifyPwd-content {
+  background: #fff;
+  width: 100%;
+  padding: 46px 12px;
+  display: flex;
+  justify-content: center;
+}
+
+.modiormontent {
+  width: 500px;
+}
+.mod-btn-wrap {
+  display: flex;
+  justify-content: center;
+}

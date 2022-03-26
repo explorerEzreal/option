@@ -1,0 +1,18 @@
+.btnWrap {
+  text-align: right;
+}
+.order-form {
+  padding: 16px;
+  background-color: #fff;
+}
+
+.order-table {
+  margin-top: 16px;
+  padding: 16px;
+  background-color: #fff;
+}
+
+.order-table-input {
+  width: 30%;
+  margin-bottom: 8px;
+}

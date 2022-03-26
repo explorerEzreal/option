@@ -1,0 +1,29 @@
+.product-list-form {
+  background-color: #fff;
+  padding: 16px;
+}
+.form-btn-wrap {
+  text-align: center;
+}
+.form-btn-wrap button {
+  margin: 0 8px;
+}
+
+.product-edit-table {
+  margin-top: 16px;
+  padding: 16px;
+  background-color: #fff;
+}
+
+.table-head {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.video-wrap {
+  display: flex;
+  flex-wrap: wrap;
+  align-content: flex-start;
+  min-height: calc(58vh);
+}

@@ -1,0 +1,41 @@
+.c--sales {
+  max-height: 800px;
+}
+
+.sales-head {
+  height: 60px;
+  margin-bottom: 16px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.sales-head-item {
+  width: 24%;
+  background-color: #fff;
+}
+
+.sales-body {
+  height: 360px;
+  margin-bottom: 16px;
+}
+
+.sales-footer {
+  height: 360px;
+  background-color: #fff;
+  margin-bottom: 16px;
+}
+
+.sales-body {
+  display: flex;
+  justify-content: space-between;
+}
+
+.sales-body-left {
+  width: 77%;
+  background-color: #fff;
+}
+
+.sales-body-right {
+  width: 22%;
+  background-color: #fff;
+}
