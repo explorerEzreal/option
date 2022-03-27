@@ -1,7 +1,10 @@
 import React from "react";
 // import { useEffect } from "react";
 import TitleBox from "./components/TitleBox";
-import Line from "./components/Line";
+import Bar from "./components/Bar";
+import Link from "./components/Link";
+import Pie from "./components/Pei";
+import Salesbar from "./components/SalesBar";
 import "./style.css";
 
 const statisticsInfo = [
@@ -30,18 +33,22 @@ const statisticsInfo = [
 const SalesStatistics = () => {
   return (
     <div className="c--sales">
-      <div className="sales-head">
+      {/* <div className="sales-head">
         {statisticsInfo?.map((item) => {
           return <TitleBox key={item.id} statisticsInfo={item} />;
         })}
-      </div>
+      </div> */}
       <div className="sales-body">
         <div className="sales-body-left">
-          <Line />
+          <Bar />
         </div>
-        <div className="sales-body-right">right</div>
+        <div className="sales-body-right">
+          <Pie />
+        </div>
       </div>
-      <div className="sales-footer">11</div>
+      <div className="sales-footer">
+        <Salesbar />
+      </div>
     </div>
   );
 };

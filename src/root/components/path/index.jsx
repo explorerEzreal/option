@@ -13,7 +13,7 @@ import ModifyPwd from "../../../page/system/modifyPwd/index";
 import Personal from "../../../page/system/personal/index";
 
 import Order from "../../../page/order";
-import SalesStatistics from "../../../page/statistics/salesStatistics";
+import Main from "../../../page/statistics/salesStatistics";
 
 const Path = () => {
   return (
@@ -30,7 +30,7 @@ const Path = () => {
       <Route path="/ProductEdit" element={<ProductEdit />} />
 
       <Route path="/orderPost" element={<Order />} />
-      <Route path="/salesData" element={<SalesStatistics />} />
+      <Route path="/main" element={<Main />} />
       {/* <Route path="/user" element={<Users />} /> */}
 
       {/* 系统管理 */}

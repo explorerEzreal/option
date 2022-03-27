@@ -1,10 +1,10 @@
 import React from "react";
 import { useState } from "react";
-import { Layout, Breadcrumb, Avatar } from "antd";
+import { Layout, Breadcrumb, Avatar, Dropdown, Menu } from "antd";
 import { useNavigate } from "react-router-dom";
 import MyMenu from "../components/leftMenu/index";
 import Path from "../components/path";
-import logo from "../../resources/img/logo.png";
+import userPhoto from "../../resources/img/a50bd1b0b40edc325d4e0f026324b78.jpg";
 import "./style.css";
 
 const { Header, Content, Footer, Sider } = Layout;
@@ -63,6 +63,7 @@ const menuData = [
 const SiderDemo = () => {
   const [path, setPath] = useState("");
   const [path1, setPath1] = useState("");
+  const [isLogin, setIsLogin] = useState(false);
 
   const navigate = useNavigate();
 
@@ -77,6 +78,14 @@ const SiderDemo = () => {
     setPath(p);
     setPath1(p1);
   };
+
+  const menu = (
+    <Menu>
+      <Menu.Item>
+        <span onClick={() => navigate("./login")}>退出</span>
+      </Menu.Item>
+    </Menu>
+  );
 
   return (
     <Layout style={{ minHeight: "100vh" }}>
@@ -109,17 +118,16 @@ const SiderDemo = () => {
             <Breadcrumb.Item>{path}</Breadcrumb.Item>
           </Breadcrumb>
 
-          <div style={{ width: 150 }}>
-            欢迎，
-            <Avatar
-              style={{
-                backgroundColor: "rgb(66, 133, 244)",
-                verticalAlign: "middle",
-              }}
-              size="large"
+          <div className="userinfo-content">
+            <Dropdown
+              overlay={menu}
+              placement="bottomLeft"
+              arrow={{ pointAtCenter: true }}
             >
-              ezreal
-            </Avatar>
+              <div className="outbtn">
+                <Avatar size="large" src={userPhoto} />
+              </div>
+            </Dropdown>
           </div>
         </Header>
 

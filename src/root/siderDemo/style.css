@@ -28,3 +28,13 @@ span.e {
   display: inline-block; /*设置元素旋转*/
   transform: rotate(-15deg);
 }
+
+.userinfo-content {
+  width: 100px;
+  display: flex;
+  justify-content: space-around;
+}
+
+.outbtn {
+  cursor: pointer;
+}

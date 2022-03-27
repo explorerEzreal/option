@@ -23,6 +23,7 @@
   height: 360px;
   background-color: #fff;
   margin-bottom: 16px;
+  border-radius: 16px;
 }
 
 .sales-body {
@@ -31,11 +32,13 @@
 }
 
 .sales-body-left {
-  width: 77%;
+  width: 70%;
   background-color: #fff;
+  border-radius: 16px;
 }
 
 .sales-body-right {
-  width: 22%;
+  width: 29%;
   background-color: #fff;
+  border-radius: 16px;
 }
