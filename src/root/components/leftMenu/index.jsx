@@ -50,7 +50,6 @@ const MyMenu = (props) => {
             key={item.title}
             title={item.title}
             icon={getIcon(item.title)}
-            // className={item.title === "首页" ? "inone" : ""}
           >
             {item.kidsMenu?.map((kid) => {
               return (
