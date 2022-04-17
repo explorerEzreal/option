@@ -1,5 +1,6 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Table, Input } from "antd";
+import { listoprateorder } from "./api";
 import "./style.css";
 
 const { Search } = Input;
@@ -44,8 +45,9 @@ const dataSource = [
 ];
 
 const Order = () => {
+  const [list, setList] = useState();
   const onSearch = (value) => {
-    console.log(value);
+    getList(value);
   };
 
   const onChange = (pagination, filters, sorter, extra) => {
@@ -54,46 +56,49 @@ const Order = () => {
 
   const columns = [
     {
-      title: "商品名称",
-      dataIndex: "productName",
-      key: "productName",
+      title: "订单名称",
+      dataIndex: "name",
+      key: "name",
     },
     {
-      title: "品牌",
-      dataIndex: "brand",
-      key: "brand",
+      title: "商品名称",
+      dataIndex: "appliance__name",
+      key: "appliance__name",
     },
     {
       title: "收件人",
-      dataIndex: "customerName",
-      key: "customerName",
-    },
-    {
-      title: "电话",
-      dataIndex: "phone",
-      key: "phone",
-    },
-    {
-      title: "地址",
-      dataIndex: "address",
-      key: "address",
+      dataIndex: "member__name",
+      key: "member__name",
     },
     {
       title: "订单状态",
-      dataIndex: "state",
-      key: "state",
+      dataIndex: "status",
+      key: "status",
     },
     {
       title: "数量",
       dataIndex: "nums",
       key: "nums",
     },
-    {
-      title: "成交价",
-      dataIndex: "price",
-      key: "price",
-    },
   ];
+  const getList = async (id = "") => {
+    const params = {
+      id: id === "" ? "" : id * 1,
+    };
+
+    const { data } = await listoprateorder(params);
+
+    if (data.code === 0) {
+      const list = data.data.map((item) => {
+        return { ...item, key: item.id };
+      });
+      setList(list);
+    }
+  };
+
+  useEffect(() => {
+    getList();
+  }, []);
 
   return (
     <div className="c-order">
@@ -108,7 +113,7 @@ const Order = () => {
           />
         </div>
 
-        <Table onChange={onChange} dataSource={dataSource} columns={columns} />
+        <Table onChange={onChange} dataSource={list} columns={columns} />
       </div>
     </div>
   );

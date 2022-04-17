@@ -1,8 +1,6 @@
 import React from "react";
 // import { useEffect } from "react";
-import TitleBox from "./components/TitleBox";
 import Bar from "./components/Bar";
-import Link from "./components/Link";
 import Pie from "./components/Pei";
 import Salesbar from "./components/SalesBar";
 import "./style.css";

@@ -7,7 +7,7 @@ const Salesbar = () => {
     let myChart = echarts.init(chartDom);
     let option;
     // prettier-ignore
-    let dataAxis = ['点', '击', '柱', '子', '或', '者', '两', '指', '在', '触', '屏', '上', '滑', '动', '能', '够', '自', '动', '缩', '放'];
+    let dataAxis = ['空调器具', '制冷器具', '清洁器具', '取暖器具', '数码电子'];
     // prettier-ignore
     let data = [220, 182, 191, 234, 290, 330, 310, 123, 442, 321, 90, 149, 210, 122, 133, 334, 198, 123, 125, 220];
     let yMax = 500;
@@ -17,7 +17,7 @@ const Salesbar = () => {
     }
     option = {
       title: {
-        text: "员工当月销量销售量排行",
+        text: "当月销量销售量排行",
         left: "40%",
       },
       xAxis: {

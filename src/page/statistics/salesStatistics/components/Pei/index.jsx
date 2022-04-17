@@ -21,11 +21,11 @@ const Pie = () => {
           type: "pie",
           radius: "50%",
           data: [
-            { value: 1048, name: "Search Engine" },
-            { value: 735, name: "Direct" },
-            { value: 580, name: "Email" },
-            { value: 484, name: "Union Ads" },
-            { value: 300, name: "Video Ads" },
+            { value: 1048, name: "空调器具" },
+            { value: 735, name: "制冷器具" },
+            { value: 580, name: "清洁器具" },
+            { value: 484, name: "取暖器具" },
+            { value: 300, name: "数码电子" },
           ],
           emphasis: {
             itemStyle: {

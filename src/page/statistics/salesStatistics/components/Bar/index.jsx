@@ -23,7 +23,7 @@ const Bar = () => {
       xAxis: [
         {
           type: "category",
-          data: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
+          data: ["一月", "二月", "三月", "四月"],
         },
       ],
       yAxis: [
@@ -33,7 +33,7 @@ const Bar = () => {
       ],
       series: [
         {
-          name: "Direct",
+          name: "空调器具",
           type: "bar",
           emphasis: {
             focus: "series",
@@ -41,7 +41,7 @@ const Bar = () => {
           data: [320, 332, 301, 334, 390, 330, 320],
         },
         {
-          name: "Email",
+          name: "制冷器具",
           type: "bar",
           stack: "Ad",
           emphasis: {
@@ -50,7 +50,7 @@ const Bar = () => {
           data: [120, 132, 101, 134, 90, 230, 210],
         },
         {
-          name: "Union Ads",
+          name: "清洁器具",
           type: "bar",
           stack: "Ad",
           emphasis: {
@@ -59,7 +59,7 @@ const Bar = () => {
           data: [220, 182, 191, 234, 290, 330, 310],
         },
         {
-          name: "Video Ads",
+          name: "取暖器具",
           type: "bar",
           stack: "Ad",
           emphasis: {
@@ -68,7 +68,7 @@ const Bar = () => {
           data: [150, 232, 201, 154, 190, 330, 410],
         },
         {
-          name: "Search Engine",
+          name: "数码电子",
           type: "bar",
           data: [862, 1018, 964, 1026, 1679, 1600, 1570],
           emphasis: {
@@ -80,43 +80,6 @@ const Bar = () => {
             },
             data: [[{ type: "min" }, { type: "max" }]],
           },
-        },
-        {
-          name: "Baidu",
-          type: "bar",
-          barWidth: 5,
-          stack: "Search Engine",
-          emphasis: {
-            focus: "series",
-          },
-          data: [620, 732, 701, 734, 1090, 1130, 1120],
-        },
-        {
-          name: "Google",
-          type: "bar",
-          stack: "Search Engine",
-          emphasis: {
-            focus: "series",
-          },
-          data: [120, 132, 101, 134, 290, 230, 220],
-        },
-        {
-          name: "Bing",
-          type: "bar",
-          stack: "Search Engine",
-          emphasis: {
-            focus: "series",
-          },
-          data: [60, 72, 71, 74, 190, 130, 110],
-        },
-        {
-          name: "Others",
-          type: "bar",
-          stack: "Search Engine",
-          emphasis: {
-            focus: "series",
-          },
-          data: [62, 82, 91, 84, 109, 110, 120],
         },
       ],
     };
