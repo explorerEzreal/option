@@ -1,7 +1,8 @@
 import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Button, Form, Input } from "antd";
+import { Button, Form, Input, message } from "antd";
 import { UserOutlined, LockOutlined } from "@ant-design/icons";
+import { login } from "./api";
 import "./style.css";
 
 const FormItem = Form.Item;
@@ -13,8 +14,16 @@ const Login = (props) => {
   const navigate = useNavigate();
 
   const onSubmit = async (value) => {
-    onChange(value);
-    navigate("/main");
+    const params = { ...value };
+    const { data } = await login(params);
+
+    if (data.code === 0) {
+      onChange(value);
+      navigate("/main");
+      message.info("登录成功");
+      return;
+    }
+    message.error(data.mse);
   };
   return (
     <div className="login-content">

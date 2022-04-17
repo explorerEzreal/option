@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { Form, Input, InputNumber, Button } from "antd";
+import { Form, Input, InputNumber, Button, Cascader, Select } from "antd";
 import VideoCard from "../components/videoCard";
-import { getTagUserNum } from "./api";
+import { getClassfy, getBrand, addProduct } from "../api";
+// import { getTagUserNum } from "./api";
 import "./style.css";
 
 const FormItem = Form.Item;
@@ -13,15 +14,25 @@ const formItemLayout = {
 
 const ProductEdit = () => {
   const [detail, setDetail] = useState({});
+  const [classfyOptions, setClassfyOptions] = useState();
+  const [brandOptions, setBrandOptions] = useState();
 
   const [form] = Form.useForm();
   const histroy = useNavigate();
   const location = useLocation();
 
-  const { id } = location.state;
+  const { id } = location.state || {};
+
+  const onAddProduct = async (params) => {
+    const { data } = await addProduct(params);
+  };
 
   const onFinish = (value) => {
-    console.log(value);
+    const params = {
+      ...value,
+      classfy: value.classfy.join(","),
+    };
+    onAddProduct(params);
   };
 
   // 商品名称发生变化
@@ -49,10 +60,46 @@ const ProductEdit = () => {
     histroy("/productList");
   };
 
+  const onGetClassfy = async () => {
+    const { data } = await getClassfy();
+    const list = data.data;
+    const classfyList = list.map((item) => {
+      const label = item.label.split(",");
+      const children = label.map((subItem) => {
+        return {
+          label: subItem,
+          value: subItem,
+          key: subItem,
+        };
+      });
+      return {
+        label: item.name,
+        value: item.name,
+        key: item.name,
+        children,
+      };
+    });
+    setClassfyOptions(classfyList);
+  };
+
+  const onGetBrandList = async () => {
+    const { data } = await getBrand();
+    console.log(data);
+    const list = data.data;
+    const brandList = list.map((item) => {
+      return {
+        label: item.name,
+        value: item.name,
+        key: item.name,
+      };
+    });
+    setBrandOptions(brandList);
+  };
+
   useEffect(() => {
-    const data = getTagUserNum();
-    console.log("data", data);
-  });
+    onGetClassfy();
+    onGetBrandList();
+  }, []);
 
   // console.log(id, "id");
 
@@ -76,30 +123,30 @@ const ProductEdit = () => {
 
           <FormItem
             name="classfy"
-            label="一级分类"
+            label="分类"
             {...formItemLayout}
             rules={[
               {
                 required: true,
-                message: "请输入商品名称",
+                message: "请选择名称",
               },
             ]}
           >
-            <Input placeholder="请输入商品一级分类,比如(空调器具)" />
+            <Cascader options={classfyOptions}></Cascader>
           </FormItem>
 
           <FormItem
-            name="secondClassfy"
-            label="二级分类"
+            name="brand"
+            label="品牌"
             {...formItemLayout}
             rules={[
               {
                 required: true,
-                message: "请输入二级分类",
+                message: "请选择品牌",
               },
             ]}
           >
-            <Input placeholder="请输入商品二级分类,比如(空调器具)" />
+            <Select options={brandOptions}></Select>
           </FormItem>
 
           <FormItem

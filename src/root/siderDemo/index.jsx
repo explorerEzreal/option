@@ -1,69 +1,19 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useState } from "react";
 import { Layout, Breadcrumb, Avatar, Dropdown, Menu } from "antd";
 import { useNavigate } from "react-router-dom";
 import MyMenu from "../components/leftMenu/index";
 import Path from "../components/path";
+import { getMenu } from "../api";
 import userPhoto from "../../resources/img/a50bd1b0b40edc325d4e0f026324b78.jpg";
 import "./style.css";
 
 const { Header, Content, Footer, Sider } = Layout;
 
-const menuData = [
-  {
-    title: "会员管理",
-    kidsMenu: [
-      {
-        path: "memberEdit",
-        title: "会员编辑",
-      },
-    ],
-  },
-  {
-    title: "商品管理",
-    kidsMenu: [
-      {
-        title: "商品列表",
-        path: "productList",
-      },
-      {
-        title: "商品编辑",
-        path: "Product",
-      },
-    ],
-  },
-  {
-    title: "订单管理",
-    kidsMenu: [
-      {
-        title: "订单发货",
-        path: "orderPost",
-      },
-    ],
-  },
-  {
-    title: "系统管理",
-    kidsMenu: [
-      {
-        title: "账号管理",
-        path: "account",
-      },
-      {
-        title: "修改密码",
-        path: "modifyPwd",
-      },
-      {
-        title: "个人中心",
-        path: "personal",
-      },
-    ],
-  },
-];
-
 const SiderDemo = () => {
   const [path, setPath] = useState("");
   const [path1, setPath1] = useState("");
-  const [isLogin, setIsLogin] = useState(false);
+  const [menuData, setMenuData] = useState([]);
 
   const navigate = useNavigate();
 
@@ -71,8 +21,6 @@ const SiderDemo = () => {
     const p = title.keyPath[0];
     const p1 = title.keyPath[1];
     const routePath = "/" + path;
-
-    console.log(path);
     navigate(routePath);
 
     setPath(p);
@@ -87,6 +35,37 @@ const SiderDemo = () => {
     </Menu>
   );
 
+  const getMunuList = async () => {
+    const phone = localStorage.getItem("phone");
+    const { data } = await getMenu({ phone });
+    console.log("data", data);
+    const list = data.data.list;
+    const menuIDList = data.data.menu;
+    const menuList = list.filter((item, index) => {
+      if (menuIDList.includes(index + 1 + "")) {
+        return item;
+      }
+    });
+
+    const menuData = menuList.map((item) => {
+      let kidPath = [];
+      let kidTitle = [];
+      kidPath = item.keyPath.split(",");
+      kidTitle = item.keyTitle.split(",");
+      const kidMenuDtat = kidTitle.map((subItem, index) => {
+        return { title: subItem, path: kidPath[index] };
+      });
+      return { title: item.title, kidsMenu: kidMenuDtat };
+    });
+    setMenuData(menuData);
+    // console.log(menuData);
+  };
+
+  useEffect(() => {
+    getMunuList();
+  }, []);
+
+  // console.log(localStorage.getItem("phone"));
   return (
     <Layout style={{ minHeight: "100vh" }}>
       <Sider collapsible theme="light">

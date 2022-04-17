@@ -11,54 +11,55 @@ import {
   Row,
   Col,
 } from "antd";
+import { getUserList } from "../api";
 
 import "./style.css";
 
 const { Search } = Input;
 // const FormItem = Form.Item;
 
-const data = [
-  {
-    id: "1",
-    name: "李蕾",
-    status: "1",
-    time: "2021-01-15 - 2022-01-05",
-    phone: "19967832659",
-    updateTime: "2021-01-15",
-  },
-  {
-    id: "2",
-    name: "李蕾",
-    status: "1",
-    time: "2021-01-15 - 2022-01-05",
-    phone: "19967832659",
-    updateTime: "2021-01-15",
-  },
-  {
-    id: "3",
-    name: "李蕾",
-    status: "1",
-    time: "2021-01-15 - 2022-01-05",
-    phone: "19967832659",
-    updateTime: "2021-01-15",
-  },
-  {
-    id: "4",
-    name: "李蕾",
-    status: "1",
-    time: "2021-01-15 - 2022-01-05",
-    phone: "19967832659",
-    updateTime: "2021-01-15",
-  },
-  {
-    id: "5",
-    name: "李蕾",
-    status: "1",
-    time: "2021-01-15 - 2022-01-05",
-    phone: "19967832659",
-    updateTime: "2021-01-15",
-  },
-];
+// const data = [
+//   {
+//     id: "1",
+//     name: "李蕾",
+//     status: "1",
+//     time: "2021-01-15 - 2022-01-05",
+//     phone: "19967832659",
+//     updateTime: "2021-01-15",
+//   },
+//   {
+//     id: "2",
+//     name: "李蕾",
+//     status: "1",
+//     time: "2021-01-15 - 2022-01-05",
+//     phone: "19967832659",
+//     updateTime: "2021-01-15",
+//   },
+//   {
+//     id: "3",
+//     name: "李蕾",
+//     status: "1",
+//     time: "2021-01-15 - 2022-01-05",
+//     phone: "19967832659",
+//     updateTime: "2021-01-15",
+//   },
+//   {
+//     id: "4",
+//     name: "李蕾",
+//     status: "1",
+//     time: "2021-01-15 - 2022-01-05",
+//     phone: "19967832659",
+//     updateTime: "2021-01-15",
+//   },
+//   {
+//     id: "5",
+//     name: "李蕾",
+//     status: "1",
+//     time: "2021-01-15 - 2022-01-05",
+//     phone: "19967832659",
+//     updateTime: "2021-01-15",
+//   },
+// ];
 
 const Demo = () => {
   const [addVipVisible, setAddVipVisible] = useState(false);
@@ -67,12 +68,13 @@ const Demo = () => {
 
   const navigate = useNavigate();
 
-  const getVipList = (value) => {
+  const getVipList = async (phone = "") => {
     const params = {
-      id: value,
+      phone,
     };
-    console.log(params);
-    setVipList(data);
+
+    const { data } = await getUserList(params);
+    setVipList(data.data);
   };
 
   const onSearch = (value) => {
@@ -82,31 +84,14 @@ const Demo = () => {
   // 编辑
   const onEdit = (value) => {
     console.log(value);
-    setVipDetail(value);
-    setAddVipVisible(true);
-  };
-  // 删除
-  const onDelete = (id) => {
-    console.log(id);
-    Modal.confirm({
-      title: "温馨提示",
-      content: "该会员将被删除",
-      okText: "确定",
-      cancelText: "取消",
-      onOk() {
-        message.success("删除成功");
-      },
+    navigate(`/personal?phone=${value.phone}`, {
+      state: { phone: value.phone },
     });
   };
-  // 跳转详情
-  const onJumpDetail = (id) => {
-    console.log(id);
-    navigate("/memberEdit/detail");
-  };
 
-  // 打开弹窗
+  // 创建用户
   const onOpenAddVip = () => {
-    setAddVipVisible(true);
+    navigate("/personal");
   };
 
   // 关闭弹窗
@@ -128,20 +113,21 @@ const Demo = () => {
       key: "phone",
     },
     {
-      title: "有效期",
-      dataIndex: "time",
-      key: "time",
+      title: "昵称",
+      dataIndex: "nickname",
+      key: "nickname",
     },
     {
       title: "状态",
       // dataIndex: "status",
       key: "status",
-      render: (record) => (record.status === "1" ? "正常" : "无效"),
+      render: (record) => (record.status === "1" ? "启用" : "未启用"),
     },
     {
-      title: "创建时间",
-      key: "updateTime",
-      dataIndex: "updateTime",
+      title: "类型",
+      key: "type",
+      // dataIndex: "updateTime",
+      render: (record) => (record.type === "0" ? "管理员" : "普通用户"),
     },
     {
       title: "操作",
@@ -162,8 +148,8 @@ const Demo = () => {
   ];
 
   useEffect(() => {
-    getVipList(1);
-  });
+    getVipList();
+  }, []);
   return (
     <div className="c--vip-content">
       <div className="vip-search-content">

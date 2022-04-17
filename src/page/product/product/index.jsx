@@ -1,7 +1,8 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Form, Row, Col, Select, Button, Cascader } from "antd";
 import VideoCard from "../components/videoCard";
+import { getClassfy, getBrand, getNewProduct } from "../api";
 import "./style.css";
 
 const FormItem = Form.Item;
@@ -10,156 +11,22 @@ const formItemLayout = {
   wrapperCol: { span: 16 },
 };
 
-const classfyOptions = [
-  {
-    label: "空调器具",
-    value: "1",
-    children: [
-      {
-        label: "电风扇",
-        value: "1",
-      },
-      {
-        label: "空调",
-        value: "2",
-      },
-      {
-        label: "空气清洁器",
-        value: "3",
-      },
-    ],
-  },
-  {
-    label: "制冷器具",
-    value: "2",
-    children: [
-      {
-        label: "冰箱",
-        value: "4",
-      },
-      {
-        label: "家用制冰机",
-        value: "5",
-      },
-      {
-        label: "冰淇淋机",
-        value: "6",
-      },
-      {
-        label: "冷饮机",
-        value: "7",
-      },
-    ],
-  },
-  {
-    label: "清洁器具",
-    value: "3",
-  },
-  {
-    label: "取暖器具",
-    value: "4",
-  },
-  {
-    label: "保健器具",
-    value: "5",
-  },
-  {
-    label: "照明器具",
-    value: "6",
-  },
-  {
-    label: "电子器具",
-    value: "6",
-  },
-  {
-    label: "厨房器具",
-    value: "6",
-  },
-];
-const brandOptions = [
-  {
-    label: "空调器具",
-    value: "1",
-  },
-  {
-    label: "空调器具",
-    value: "2",
-  },
-  {
-    label: "空调器具",
-    value: "3",
-  },
-  {
-    label: "空调器具",
-    value: "4",
-  },
-  {
-    label: "空调器具",
-    value: "5",
-  },
-  {
-    label: "空调器具",
-    value: "6",
-  },
-];
-
-const list = [
-  {
-    id: "1",
-    frontUrl:
-      "https://img10.360buyimg.com/n1/jfs/t1/124912/3/22864/133810/62130132Ef092d911/c9ec61719a399e0a.jpg",
-    name: "美的(Midea)606升变频一级能效对开双门家用冰箱",
-    describe: "大容量精细分储，一级双变频更节能，风冷无霜不结冰",
-    price: "3199",
-  },
-  {
-    id: "2",
-    frontUrl:
-      "https://img10.360buyimg.com/n1/jfs/t1/124912/3/22864/133810/62130132Ef092d911/c9ec61719a399e0a.jpg",
-    name: "美的(Midea)606升变频一级能效对开双门家用冰箱",
-    describe: "大容量精细分储，一级双变频更节能，风冷无霜不结冰",
-    price: "3199",
-  },
-  {
-    id: "3",
-    frontUrl:
-      "https://img10.360buyimg.com/n1/jfs/t1/124912/3/22864/133810/62130132Ef092d911/c9ec61719a399e0a.jpg",
-    name: "美的(Midea)606升变频一级能效对开双门家用冰箱",
-    describe: "大容量精细分储，一级双变频更节能，风冷无霜不结冰",
-    price: "3199",
-  },
-  {
-    id: "4",
-    frontUrl:
-      "https://img10.360buyimg.com/n1/jfs/t1/124912/3/22864/133810/62130132Ef092d911/c9ec61719a399e0a.jpg",
-    name: "美的(Midea)606升变频一级能效对开双门家用冰箱",
-    describe: "大容量精细分储，一级双变频更节能，风冷无霜不结冰",
-    price: "3199",
-  },
-  {
-    id: "5",
-    frontUrl:
-      "https://img10.360buyimg.com/n1/jfs/t1/124912/3/22864/133810/62130132Ef092d911/c9ec61719a399e0a.jpg",
-    name: "美的(Midea)606升变频一级能效对开双门家用冰箱",
-    describe: "大容量精细分储，一级双变频更节能，风冷无霜不结冰",
-    price: "3199",
-  },
-  {
-    id: "6",
-    frontUrl:
-      "https://img10.360buyimg.com/n1/jfs/t1/124912/3/22864/133810/62130132Ef092d911/c9ec61719a399e0a.jpg",
-    name: "美的(Midea)606升变频一级能效对开双门家用冰箱",
-    describe: "大容量精细分储，一级双变频更节能，风冷无霜不结冰",
-    price: "3199",
-  },
-];
-
 const Product = () => {
   const [form] = Form.useForm();
   const histroy = useNavigate();
+  const [classfyOptions, setClassfyOptions] = useState();
+  const [brandOptions, setBrandOptions] = useState();
+  const [list, setList] = useState();
 
   const onFinish = (value) => {
     console.log(value);
+    const params = {
+      ...value,
+      classfy: value.classfy?.join(",") || "",
+      brand: value.brand || "",
+    };
+    console.log(params);
+    onGetProduct(params);
   };
 
   // 编辑
@@ -176,6 +43,55 @@ const Product = () => {
   const onAddProduct = () => {
     histroy("/ProductEdit");
   };
+
+  const onGetClassfy = async () => {
+    const { data } = await getClassfy();
+
+    const list = data.data;
+    const classfyList = list.map((item) => {
+      const label = item.label.split(",");
+      const children = label.map((subItem) => {
+        return {
+          label: subItem,
+          value: subItem,
+          key: subItem,
+        };
+      });
+      return {
+        label: item.name,
+        value: item.name,
+        key: item.name,
+        children,
+      };
+    });
+    setClassfyOptions(classfyList);
+  };
+
+  const onGetBrandList = async () => {
+    const { data } = await getBrand();
+    console.log(data);
+    const list = data.data;
+    const brandList = list.map((item) => {
+      return {
+        label: item.name,
+        value: item.name,
+        key: item.name,
+      };
+    });
+    setBrandOptions(brandList);
+  };
+
+  const onGetProduct = async (params) => {
+    const { data } = await getNewProduct(params);
+
+    setList(data.data);
+  };
+
+  useEffect(() => {
+    onGetClassfy();
+    onGetBrandList();
+    onGetProduct({ brand: "", classfy: "" });
+  }, []);
 
   return (
     <div className="c-product-list">
@@ -199,7 +115,13 @@ const Product = () => {
                 <Button type="primary" htmlType="submit">
                   查询
                 </Button>
-                <Button>重置</Button>
+                <Button
+                  onClick={() => {
+                    form.resetFields();
+                  }}
+                >
+                  重置
+                </Button>
               </div>
             </Col>
           </Row>
@@ -209,7 +131,7 @@ const Product = () => {
       <div className="product-edit-table">
         <div className="table-head">
           <div className="left-nums">
-            共查询到<span>{list.length}</span>条数据
+            共查询到<span>{list?.length}</span>条数据
           </div>
           <div className="right-btn">
             <Button type="primary" onClick={onAddProduct}>

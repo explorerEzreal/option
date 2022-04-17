@@ -9,14 +9,12 @@ function App() {
   const { pathname } = useLocation();
   const navigate = useNavigate();
   const [isLogin, setIsLogin] = useState(false);
-  const [userPhone, setUserPhone] = useState();
   const onUserSumbit = (value) => {
-    setUserPhone(value.userPhone);
+    localStorage.setItem("phone", value.userPhone);
     setIsLogin(true);
   };
 
   useEffect(() => {
-    console.log(pathname);
     if (pathname.split("/")[1] === "login") {
       setIsLogin(false);
       return;

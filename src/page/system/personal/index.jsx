@@ -1,5 +1,7 @@
-import React, { useState } from "react";
-import { Form, Select, Row, Col, Input, Checkbox, Button } from "antd";
+import React, { useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
+import { Form, Select, Row, Col, Input, Checkbox, Button, Radio } from "antd";
+import { addUser, getUserDetail, editUser } from "../api";
 
 import "./style.css";
 
@@ -9,21 +11,73 @@ const formItemLayout = {
   labelCol: { span: 8 },
   wrapperCol: { span: 16 },
 };
-const plainOptions = ["会员管理", "商品管理", "订单管理", "系统管理", "首页"];
+
+const plainOptions = [
+  {
+    label: "会员管理",
+    value: "1",
+  },
+  {
+    label: "商品管理",
+    value: "2",
+  },
+  {
+    label: "订单管理",
+    value: "3",
+  },
+  {
+    label: "系统管理",
+    value: "4",
+  },
+];
+
+const statusOption = [
+  {
+    label: "启用",
+    value: "1",
+  },
+  {
+    label: "不启用",
+    value: "0",
+  },
+];
 
 const Personal = () => {
   const [form] = Form.useForm();
   const [option, setOption] = useState(plainOptions);
 
+  const location = useLocation();
+
+  const { phone } = location.state || {};
+
+  const onAddUser = async (params) => {
+    const { data } = await addUser(params);
+  };
+
+  const onEditUser = async (params) => {
+    const { data } = await editUser(params);
+  };
+
   const onSubmit = (value) => {
     console.log(value);
+    const params = {
+      ...value,
+      menu: ((value.menu || []).map((i) => i) || []).join(","),
+    };
+
+    if (phone) {
+      // onGetUserDetail(phone);
+      onEditUser(params);
+      return;
+    }
+
+    onAddUser(params);
   };
 
   const onTypeChange = (value) => {
-    console.log(value);
     let newOptiob = [...option];
     if (value === "1") {
-      newOptiob = ["会员管理", "商品管理", "订单管理", "首页"];
+      newOptiob = plainOptions.slice(0, -1);
       setOption(newOptiob);
       return;
     }
@@ -31,10 +85,21 @@ const Personal = () => {
     setOption(plainOptions);
   };
 
-  const onJurisdictionChange = (value) => {
-    console.log(value);
+  const onGetUserDetail = async (value) => {
+    const params = {
+      phone,
+    };
+    const { data } = await getUserDetail(params);
+    const menu = data.data.menu.split(",");
+    form.setFieldsValue({ ...data.data, menu });
   };
 
+  useEffect(() => {
+    console.log(phone, "phone");
+    if (phone) {
+      onGetUserDetail(phone);
+    }
+  }, []);
   return (
     <div className="p-Personal-content">
       <div className="performcontent">
@@ -43,7 +108,7 @@ const Personal = () => {
             <Col span={10}>
               <FormItem
                 {...formItemLayout}
-                name="userType"
+                name="type"
                 label="账号类型"
                 rules={[
                   {
@@ -63,7 +128,7 @@ const Personal = () => {
             <Col span={10}>
               <FormItem
                 {...formItemLayout}
-                name="trueName"
+                name="name"
                 label="真实姓名"
                 rules={[
                   {
@@ -128,9 +193,9 @@ const Personal = () => {
           </Row>
 
           <Row>
-            <Col span={24}>
+            <Col span={12}>
               <FormItem
-                name="jurisdiction"
+                name="menu"
                 label="权限配置"
                 {...formItemLayout}
                 // initialValue={["Apple"]}
@@ -141,10 +206,24 @@ const Personal = () => {
                   },
                 ]}
               >
-                <Checkbox.Group
-                  options={option}
-                  onChange={onJurisdictionChange}
-                />
+                <Checkbox.Group options={option} />
+              </FormItem>
+            </Col>
+
+            <Col span={12}>
+              <FormItem
+                name="status"
+                label="状态"
+                {...formItemLayout}
+                // initialValue={["Apple"]}
+                rules={[
+                  {
+                    required: true,
+                    message: "请选择状态",
+                  },
+                ]}
+              >
+                <Radio.Group options={statusOption} />
               </FormItem>
             </Col>
           </Row>

@@ -13,111 +13,64 @@ import {
 } from "antd";
 import AddVip from "./component/AddVip";
 import { getAdress } from "../../resources/utils";
+import { getMemberList, deleteMember } from "./api";
 import "./style.css";
 
 const { Search } = Input;
-// const FormItem = Form.Item;
-
-const data = [
-  {
-    id: "1",
-    key: "1",
-    name: "李蕾",
-    sex: "女",
-    birthday: "1998-01-18",
-    adress: ["130000", "130300", "130301"],
-    integral: 2560,
-    phone: "19967832659",
-  },
-  {
-    id: "2",
-    key: "2",
-    name: "萝莉",
-    sex: "女",
-    birthday: "1997-10-18",
-    adress: ["130000", "130300", "130301"],
-    integral: 2560,
-    phone: "19967832659",
-  },
-  {
-    id: "3",
-    key: "3",
-    name: "吕洞玄",
-    sex: "男",
-    birthday: "2000-11-18",
-    adress: ["130000", "130300", "130301"],
-    integral: 2560,
-    phone: "19967832659",
-  },
-  {
-    id: "4",
-    key: "4",
-    name: "宁姚",
-    sex: "女",
-    birthday: "2000-11-18",
-    adress: ["130000", "130300", "130301"],
-    integral: 2120,
-    phone: "17754369754",
-  },
-  {
-    id: "5",
-    key: "5",
-    name: "左右",
-    sex: "女",
-    birthday: "2000-11-18",
-    adress: ["130000", "130300", "130301"],
-    integral: 2120,
-    phone: "17343420107",
-  },
-];
 
 const Demo = () => {
   const [addVipVisible, setAddVipVisible] = useState(false);
   const [vipDetail, setVipDetail] = useState({});
   const [vipList, setVipList] = useState([]);
 
-  const navigate = useNavigate();
-
-  const getVipList = (value) => {
+  // 获取列表数据
+  const getVipList = async (phone = "") => {
     const params = {
-      id: value,
+      phone,
     };
-    console.log(params);
-    setVipList(data);
+
+    const { data } = await getMemberList(params);
+    if (data.code === 0) {
+      const list = data.data || [];
+      const newList = list.map((item) => {
+        const addressList = item.address.split(",");
+        return { ...item, address: addressList, key: item.id };
+      });
+
+      setVipList(newList);
+    }
   };
 
-  const onSearch = (value) => {
-    getVipList(value);
+  // 删除会员
+  const onDeleteMember = async (id) => {
+    deleteMember({ id });
+    getVipList();
+  };
+
+  // 搜索会员
+  const onSearch = (phone) => {
+    getVipList(phone);
   };
 
   // 编辑
   const onEdit = (value) => {
-    console.log(value);
     setVipDetail(value);
     setAddVipVisible(true);
   };
+
   // 删除
   const onDelete = (id) => {
-    console.log(id);
     Modal.confirm({
       title: "温馨提示",
       content: "该会员将被删除",
       okText: "确定",
       cancelText: "取消",
       onOk() {
+        onDeleteMember(id);
         message.success("删除成功");
       },
     });
   };
-  // 跳转详情
-  const onJumpDetail = (id) => {
-    console.log(id);
-    navigate("/memberEdit/detail");
-  };
-  // 表单提交
-  // const onFinish = (value) => {
-  //   console.log(value);
-  // };
 
   // 打开弹窗
   const onOpenAddVip = () => {
@@ -128,12 +81,12 @@ const Demo = () => {
   const onCloseAddVip = () => {
     setAddVipVisible(false);
     setVipDetail({});
+    getVipList();
   };
 
-  // 保存会员信息
-  // const onSaveVipValue = (value) => {
-  //   console.log(value);
-  // };
+  useEffect(() => {
+    getVipList();
+  }, []);
 
   const columns = [
     {
@@ -141,39 +94,47 @@ const Demo = () => {
       dataIndex: "name",
       key: "name",
       render: (text) => <a>{text}</a>,
+      width: 100,
     },
     {
       title: "生日",
-      dataIndex: "birthday",
-      key: "birthday",
+      dataIndex: "birthDay",
+      key: "birthDay",
+      width: 200,
     },
     {
       title: "性别",
-      dataIndex: "sex",
       key: "sex",
+      render: (record) => {
+        return <span>{record.sex === "1" ? "男" : "女"}</span>;
+      },
+      width: 100,
     },
     {
       title: "地址",
       // dataIndex: "address",
-      key: "adress",
+      key: "address",
       render: (record) => {
-        const adressInfo = getAdress(record.adress);
+        const adressInfo = getAdress(record.address);
         return <span>{adressInfo}</span>;
       },
+      width: 400,
     },
     {
       title: "积分",
-      key: "integral",
-      dataIndex: "integral",
+      key: "grand",
+      dataIndex: "grand",
+      width: 100,
     },
     {
       title: "电话",
-      key: "phone",
-      dataIndex: "phone",
+      key: "phoneNumber",
+      dataIndex: "phoneNumber",
+      width: 200,
     },
     {
       title: "操作",
-      key: "action",
+      key: "id",
       render: (record) => (
         <Space size="middle">
           <Typography.Link
@@ -193,23 +154,11 @@ const Demo = () => {
           >
             删除
           </Typography.Link>
-
-          <Typography.Link
-            onClick={() => onJumpDetail(record.key)}
-            style={{
-              marginRight: 8,
-            }}
-          >
-            查看记录
-          </Typography.Link>
         </Space>
       ),
     },
   ];
 
-  useEffect(() => {
-    getVipList(1);
-  });
   return (
     <div className="c--vip-content">
       <div className="vip-search-content">
@@ -232,7 +181,11 @@ const Demo = () => {
       </div>
 
       <div className="vip-table-content">
-        <Table columns={columns} dataSource={vipList} />
+        <Table
+          columns={columns}
+          dataSource={vipList}
+          pagination={{ pageSize: 6 }}
+        />
       </div>
 
       {addVipVisible && (

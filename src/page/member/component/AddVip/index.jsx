@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { Modal, Form, Input, message, DatePicker, Radio, Cascader } from "antd";
 import moment from "moment";
-
+import { addMember, editMember } from "../../api";
 import { provinceData } from "../../../../resources/adress";
 
 const FormItem = Form.Item;
@@ -10,26 +10,34 @@ const formItemLayout = {
   wrapperCol: { span: 20 },
 };
 const options = [
-  { label: "男", value: "男" },
-  { label: "女", value: "女" },
+  { label: "男", value: "1" },
+  { label: "女", value: "0" },
 ];
 
 const format = "YYYY-MM-DD";
 const AddVip = ({ closeAddVip, vipDetail }) => {
   const [form] = Form.useForm();
 
-  // const [detail, setDetail] = useState({});
+  // 添加会员
+  const onSaveVipValue = async (params) => {
+    const { data } = await addMember(params);
+    if (data.code === 0) {
+      message.success(data.mse);
+      closeAddVip();
+      return;
+    }
+    message.error("系统错误");
+  };
 
-  const onSaveVipValue = async (value) => {
-    console.log(value);
-    message.success("添加成功");
-    // const params = {
-    //   ...value,
-    //   birthday: moment(value.birthday).format(format), // 日期格式
-    //   // birthday: moment(value.birthday).valueOf(), //时间戳
-    // };
-
-    closeAddVip();
+  // 修改会员信息
+  const editVipInfo = async (params) => {
+    const { data } = await editMember(params);
+    if (data.code === 0) {
+      message.success("修改成功");
+      closeAddVip();
+      return;
+    }
+    message.error("系统错误");
   };
   //保存弹窗信息表单
   const onFormSubmit = () => {
@@ -37,13 +45,19 @@ const AddVip = ({ closeAddVip, vipDetail }) => {
   };
 
   const onFinish = (value) => {
-    // console.log(value);
     const params = {
       ...value,
-      birthday: moment(value.birthday).format(format),
+      birthDay: moment(value.birthDay).format(format),
+      address: `${value.address[0]},${value.address[1]},${value.address[2]}`,
     };
-    onSaveVipValue(params);
-    // console.log(params);
+
+    // 1是修改 0是添加
+    const editType = vipDetail.name ? "1" : "0";
+    if (editType === "0") {
+      onSaveVipValue(params);
+      return;
+    }
+    editVipInfo(params);
   };
 
   const disabledDate = (current) => {
@@ -54,7 +68,7 @@ const AddVip = ({ closeAddVip, vipDetail }) => {
     // console.log(provinceData);
     const newDetail = {
       ...vipDetail,
-      birthday: moment(vipDetail.birthday),
+      birthDay: moment(vipDetail.birthDay),
       // address: ["130000", "130300", "130301"],
       // name: "吕洞玄",
       // phone: "19967832659",
@@ -91,7 +105,7 @@ const AddVip = ({ closeAddVip, vipDetail }) => {
 
           <FormItem
             label="电话"
-            name="phone"
+            name="phoneNumber"
             {...formItemLayout}
             rules={[
               {
@@ -104,8 +118,22 @@ const AddVip = ({ closeAddVip, vipDetail }) => {
           </FormItem>
 
           <FormItem
+            label="积分"
+            name="grand"
+            {...formItemLayout}
+            rules={[
+              {
+                required: true,
+                message: "请输入积分",
+              },
+            ]}
+          >
+            <Input placeholder="请输入积分" />
+          </FormItem>
+
+          <FormItem
             label="生日"
-            name="birthday"
+            name="birthDay"
             {...formItemLayout}
             rules={[
               {
@@ -119,7 +147,7 @@ const AddVip = ({ closeAddVip, vipDetail }) => {
 
           <FormItem
             label="地址"
-            name="adress"
+            name="address"
             {...formItemLayout}
             rules={[
               {

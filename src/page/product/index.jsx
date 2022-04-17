@@ -12,7 +12,7 @@ import {
   Col,
   Select,
 } from "antd";
-import { getAdress } from "../../resources/utils";
+import { getProduct, editProduct } from "./api";
 
 const { Search } = Input;
 const { Option } = Select;
@@ -62,83 +62,64 @@ const data = [
 ];
 
 const Demo = () => {
-  const [addVipVisible, setAddVipVisible] = useState(false);
-  const [vipDetail, setVipDetail] = useState({});
   const [vipList, setVipList] = useState([]);
 
   const navigate = useNavigate();
 
-  const getVipList = (value) => {
+  const onGetProduct = async (id = "", status = "") => {
     const params = {
-      id: value,
+      id,
+      status,
     };
-    console.log(params);
-    setVipList(data);
+    const { data } = await getProduct(params);
+
+    setVipList(data.data);
   };
 
   const onSearch = (value) => {
-    getVipList(value);
+    onGetProduct(value * 1);
   };
 
-  // 编辑
-  const onEdit = (value) => {
-    console.log(value);
-    setVipDetail(value);
-    setAddVipVisible(true);
+  const onEditProduct = async (params) => {
+    const { data } = await editProduct(params);
+
+    onGetProduct();
   };
-  // 删除
-  const onDelete = (id) => {
+
+  // 下架
+  const onDelete = (id, status) => {
     console.log(id);
     Modal.confirm({
       title: "温馨提示",
-      content: "该会员将被删除",
+      content: status === "1" ? "该商品将会下架" : "该商品将会上架",
       okText: "确定",
       cancelText: "取消",
       onOk() {
-        message.success("删除成功");
+        const params = {
+          id,
+          status: status === "1" ? "0" : "1",
+        };
+        onEditProduct(params);
+        message.success("下架成功");
       },
     });
-  };
-  // 跳转详情
-  const onJumpDetail = (id) => {
-    console.log(id);
-    navigate("/memberEdit/detail");
-  };
-  // 表单提交
-  // const onFinish = (value) => {
-  //   console.log(value);
-  // };
-
-  // 打开弹窗
-  const onOpenAddVip = () => {
-    setAddVipVisible(true);
-  };
-
-  // 关闭弹窗
-  const onCloseAddVip = () => {
-    setAddVipVisible(false);
-    setVipDetail({});
   };
 
   // 选择状态
   const onChange = (value) => {
-    console.log(value);
+    onGetProduct("", value);
   };
-  // 保存会员信息
-  // const onSaveVipValue = (value) => {
-  //   console.log(value);
-  // };
 
   const columns = [
     {
       title: "商品编号",
-      dataIndex: "productId",
-      key: "productId",
+      dataIndex: "id",
+      key: "id",
     },
     {
       title: "商品名称",
-      dataIndex: "productIdName",
-      key: "productIdName",
+      dataIndex: "name",
+      key: "name",
     },
     {
       title: "商品价格",
@@ -158,7 +139,10 @@ const Demo = () => {
     {
       title: "状态",
       key: "status",
-      dataIndex: "status",
+      // dataIndex: "status",
+      render: (record) => {
+        return record.status === "1" ? "在售" : "已下架";
+      },
     },
     {
       title: "操作",
@@ -166,12 +150,12 @@ const Demo = () => {
       render: (record) => (
         <Space size="middle">
           <Typography.Link
-            onClick={() => onEdit(record)}
+            onClick={() => onDelete(record.id, record.status)}
             style={{
               marginRight: 8,
             }}
           >
-            下架
+            {record.status === "1" ? "下架" : "上架"}
           </Typography.Link>
         </Space>
       ),
@@ -179,8 +163,8 @@ const Demo = () => {
   ];
 
   useEffect(() => {
-    getVipList(1);
-  });
+    onGetProduct();
+  }, []);
   return (
     <div className="c--vip-content">
       <div className="vip-search-content">
