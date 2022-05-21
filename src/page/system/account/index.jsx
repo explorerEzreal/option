@@ -91,7 +91,9 @@ const Demo = () => {
 
   // 创建用户
   const onOpenAddVip = () => {
-    navigate("/personal");
+    navigate(`/personal?phone="0"`, {
+      state: { phone: "0" },
+    });
   };
 
   // 关闭弹窗

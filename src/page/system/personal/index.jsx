@@ -1,6 +1,16 @@
 import React, { useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
-import { Form, Select, Row, Col, Input, Checkbox, Button, Radio } from "antd";
+import { useLocation, useNavigate } from "react-router-dom";
+import {
+  Form,
+  Select,
+  Row,
+  Col,
+  Input,
+  Checkbox,
+  Button,
+  Radio,
+  message,
+} from "antd";
 import { addUser, getUserDetail, editUser } from "../api";
 
 import "./style.css";
@@ -47,15 +57,30 @@ const Personal = () => {
   const [option, setOption] = useState(plainOptions);
 
   const location = useLocation();
+  const navigate = useNavigate();
 
   const { phone } = location.state || {};
 
   const onAddUser = async (params) => {
     const { data } = await addUser(params);
+
+    if (data.code === 0) {
+      message.info("添加成功");
+      form.resetFields();
+    }
   };
 
   const onEditUser = async (params) => {
     const { data } = await editUser(params);
+
+    if (data.code !== 0) {
+      message.error("系统错误!");
+      return;
+    }
+
+    message.info(data.mse || "修改成功");
+    form.resetFields();
+    navigate(`/account`, {});
   };
 
   const onSubmit = (value) => {
@@ -65,7 +90,7 @@ const Personal = () => {
       menu: ((value.menu || []).map((i) => i) || []).join(","),
     };
 
-    if (phone) {
+    if (phone && phone !== "0") {
       // onGetUserDetail(phone);
       onEditUser(params);
       return;
@@ -85,7 +110,7 @@ const Personal = () => {
     setOption(plainOptions);
   };
 
-  const onGetUserDetail = async (value) => {
+  const onGetUserDetail = async (phone) => {
     const params = {
       phone,
     };
@@ -95,10 +120,12 @@ const Personal = () => {
   };
 
   useEffect(() => {
-    console.log(phone, "phone");
     if (phone) {
       onGetUserDetail(phone);
+      return;
     }
+    const userPhone = localStorage.getItem("phone");
+    onGetUserDetail(userPhone);
   }, []);
   return (
     <div className="p-Personal-content">

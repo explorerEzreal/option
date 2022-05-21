@@ -169,6 +169,7 @@ const Demo = () => {
                 placeholder="请输入手机号码"
                 onSearch={onSearch}
                 enterButton
+                allowClear
               />
             </Col>
             <Col span={4}>

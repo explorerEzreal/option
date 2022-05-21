@@ -38,3 +38,11 @@ span.e {
 .outbtn {
   cursor: pointer;
 }
+
+.avatarImg-wrap {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}

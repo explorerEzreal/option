@@ -9,7 +9,7 @@
 
 .login-form {
   width: 400px;
-  height: 250px;
+  height: 295px;
   background: #fff;
   border-radius: 16px;
   padding: 48px 48px;
@@ -21,4 +21,40 @@
 
 .login-btn-wrap button {
   width: 100%;
+}
+
+.code-wrap {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.code-input {
+  width: 60%;
+}
+.code-view {
+  font-weight: 600;
+  width: 35%;
+  line-height: 32px;
+  font-size: 25px;
+  display: flex;
+  justify-content: space-around;
+  background: #e0c3fc;  
+}
+.code-font {
+  color: rgb(234, 67, 53);
+  display: inline-block; /*设置元素旋转*/
+  transform: rotate(-15deg);
+}
+
+.code-font:last-child {
+  color: rgb(234, 67, 53);
+  display: inline-block; /*设置元素旋转*/
+  transform: rotate(45deg);
+}
+
+.code-font:first-child {
+  color: rgb(234, 67, 53);
+  display: inline-block; /*设置元素旋转*/
+  transform: rotate(30deg);
 }

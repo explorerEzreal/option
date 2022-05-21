@@ -4,8 +4,10 @@ import { Layout, Breadcrumb, Avatar, Dropdown, Menu } from "antd";
 import { useNavigate } from "react-router-dom";
 import MyMenu from "../components/leftMenu/index";
 import Path from "../components/path";
-import { getMenu } from "../api";
-import userPhoto from "../../resources/img/a50bd1b0b40edc325d4e0f026324b78.jpg";
+import { getMenu, uploadAvatar } from "../api";
+import UpAvatar from "../../components/avatar/Avatar";
+import defaultAvatar from "../../resources/img/a50bd1b0b40edc325d4e0f026324b78.jpg";
+import Modal from "antd/lib/modal/Modal";
 import "./style.css";
 
 const { Header, Content, Footer, Sider } = Layout;
@@ -14,8 +16,12 @@ const SiderDemo = () => {
   const [path, setPath] = useState("");
   const [path1, setPath1] = useState("");
   const [menuData, setMenuData] = useState([]);
+  const [isShowModal, setIsShow] = useState(false);
+  const [avatarImg, setAvatarImg] = useState();
+  const [imgUrlData, setImgUrlData] = useState(localStorage.getItem("imgUrl"));
 
   const navigate = useNavigate();
+  const imgUrl = localStorage.getItem("imgUrl");
 
   const changePath = (title, path) => {
     const p = title.keyPath[0];
@@ -38,7 +44,7 @@ const SiderDemo = () => {
   const getMunuList = async () => {
     const phone = localStorage.getItem("phone");
     const { data } = await getMenu({ phone });
-    console.log("data", data);
+
     const list = data.data.list;
     const menuIDList = data.data.menu;
     const menuList = list.filter((item, index) => {
@@ -58,14 +64,45 @@ const SiderDemo = () => {
       return { title: item.title, kidsMenu: kidMenuDtat };
     });
     setMenuData(menuData);
-    // console.log(menuData);
+  };
+
+  const editAvatarImg = async () => {
+    const phone = localStorage.getItem("phone");
+    const params = {
+      phone,
+      imgUrl: avatarImg,
+    };
+    const { data } = await uploadAvatar(params);
+
+    if (data.code !== 0) {
+      return;
+    }
+
+    localStorage.setItem("imgUrl", data.imgUrl);
+    setImgUrlData(data.imgUrl);
+  };
+
+  const showModal = () => {
+    setIsShow(true);
+  };
+
+  const handleOk = () => {
+    editAvatarImg();
+    setIsShow(false);
+  };
+
+  const handleCancel = () => {
+    setIsShow(false);
+  };
+
+  const onImageChange = (url) => {
+    setAvatarImg(url);
   };
 
   useEffect(() => {
     getMunuList();
   }, []);
 
-  // console.log(localStorage.getItem("phone"));
   return (
     <Layout style={{ minHeight: "100vh" }}>
       <Sider collapsible theme="light">
@@ -104,7 +141,11 @@ const SiderDemo = () => {
               arrow={{ pointAtCenter: true }}
             >
               <div className="outbtn">
-                <Avatar size="large" src={userPhoto} />
+                <Avatar
+                  onClick={showModal}
+                  size="large"
+                  src={imgUrlData === "null" ? defaultAvatar : imgUrlData}
+                />
               </div>
             </Dropdown>
           </div>
@@ -115,6 +156,21 @@ const SiderDemo = () => {
             <Path />
           </div>
         </Content>
+
+        {isShowModal && (
+          <Modal
+            title="修改头像"
+            visible={true}
+            onOk={handleOk}
+            onCancel={handleCancel}
+          >
+            <div className="avatarImg-wrap">
+              <div className="avatarImg-content">
+                <UpAvatar value={imgUrl} onChange={onImageChange} />
+              </div>
+            </div>
+          </Modal>
+        )}
 
         <Footer style={{ textAlign: "center" }}>马什么梅？</Footer>
       </Layout>

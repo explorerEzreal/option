@@ -100,7 +100,7 @@ const AddVip = ({ closeAddVip, vipDetail }) => {
               },
             ]}
           >
-            <Input placeholder="请输入姓名" />
+            <Input placeholder="请输入姓名" allowClear />
           </FormItem>
 
           <FormItem

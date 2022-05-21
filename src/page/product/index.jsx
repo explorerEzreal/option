@@ -77,6 +77,10 @@ const Demo = () => {
   };
 
   const onSearch = (value) => {
+    if (value === "") {
+      onGetProduct(value);
+      return;
+    }
     onGetProduct(value * 1);
   };
 
@@ -180,6 +184,7 @@ const Demo = () => {
             <Col span={8} push={8}>
               选择状态：
               <Select placeholder="选择商品的状态" onChange={onChange}>
+                <Option value="">全部</Option>
                 <Option value="1">未下架</Option>
                 <Option value="0">已下架</Option>
               </Select>

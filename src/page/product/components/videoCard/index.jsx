@@ -8,12 +8,20 @@ import "./style.css";
  * @property {string} title 标题
  * @property {string} tags tags
  * @property {string} updateTime 更新时间
+ * @property {string} isShowbtn  是否需要操作按钮
  * @property {Function} editCallback 点击编辑后执行的回调函数
  * @property {Function} deleteCallback 删除成功后执行的回调函数
  */
 const VideoCard = (props) => {
-  const { imgUrl, title, tags, updateTime, editCallback, deleteCallback } =
-    props;
+  const {
+    imgUrl,
+    title,
+    tags,
+    updateTime,
+    editCallback,
+    deleteCallback,
+    isShowbtn = true,
+  } = props;
 
   const editItem = () => {
     editCallback();
@@ -38,17 +46,20 @@ const VideoCard = (props) => {
           &nbsp;
         </div>
       </div>
+
       <div className="operation-wrap">
         <div className="price"> {updateTime + `￥`}</div>
-        <div className="operation">
-          <span className="link" onClick={() => editItem()}>
-            编辑
-          </span>
-          <Divider type="vertical" />
-          <span className="link" onClick={() => deleteItem()}>
-            删除
-          </span>
-        </div>
+        {isShowbtn && (
+          <div className="operation">
+            <span className="link" onClick={() => editItem()}>
+              编辑
+            </span>
+            <Divider type="vertical" />
+            <span className="link" onClick={() => deleteItem()}>
+              删除
+            </span>
+          </div>
+        )}
       </div>
     </div>
   );

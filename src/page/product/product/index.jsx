@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Form, Row, Col, Select, Button, Cascader } from "antd";
+import { Form, Row, Col, Select, Button, Cascader, Modal, message } from "antd";
 import VideoCard from "../components/videoCard";
-import { getClassfy, getBrand, getNewProduct } from "../api";
+import { getClassfy, getBrand, getNewProduct, deleteProduct } from "../api";
 import "./style.css";
 
 const FormItem = Form.Item;
@@ -34,9 +34,31 @@ const Product = () => {
     histroy(`/ProductEdit?id=${id}`, { state: { id: id } });
   };
 
+  const onDeletePro = async (params) => {
+    const { data } = await deleteProduct(params);
+
+    if (data.code !== 0) {
+      message.error(data.mse || "系统错误");
+      return;
+    }
+    message.info("删除成功");
+    onGetProduct();
+  };
+
   // 删除
   const deleteCallback = (id) => {
-    console.log(id);
+    Modal.confirm({
+      title: "温馨提示",
+      content: "该商品将被删除",
+      okText: "确定",
+      cancelText: "取消",
+      onOk() {
+        const params = {
+          id,
+        };
+        onDeletePro(params);
+      },
+    });
   };
 
   // 新增商品
@@ -81,7 +103,7 @@ const Product = () => {
     setBrandOptions(brandList);
   };
 
-  const onGetProduct = async (params) => {
+  const onGetProduct = async (params = { brand: "", classfy: "" }) => {
     const { data } = await getNewProduct(params);
 
     setList(data.data);
@@ -90,7 +112,7 @@ const Product = () => {
   useEffect(() => {
     onGetClassfy();
     onGetBrandList();
-    onGetProduct({ brand: "", classfy: "" });
+    onGetProduct();
   }, []);
 
   return (
@@ -112,16 +134,18 @@ const Product = () => {
 
             <Col span={8}>
               <div className="form-btn-wrap">
-                <Button type="primary" htmlType="submit">
-                  查询
-                </Button>
-                <Button
-                  onClick={() => {
-                    form.resetFields();
-                  }}
-                >
-                  重置
-                </Button>
+                <div className="btn-wrap-flex">
+                  <Button type="primary" htmlType="submit">
+                    查询
+                  </Button>
+                  <Button
+                    onClick={() => {
+                      form.resetFields();
+                    }}
+                  >
+                    重置
+                  </Button>
+                </div>
               </div>
             </Col>
           </Row>

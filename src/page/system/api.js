@@ -67,3 +67,20 @@ export async function editUser(params) {
 
   return data;
 }
+
+/**
+ * @description 登陆
+ *
+ */
+export async function login(params) {
+  let data = {};
+  await request({
+    url: "/oprate/login",
+    method: "post",
+    data: params,
+  }).then((res) => {
+    data = res;
+  });
+
+  return data;
+}

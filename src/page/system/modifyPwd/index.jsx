@@ -1,6 +1,7 @@
-import React from "react";
+import React, { useState } from "react";
 import { Form, Input, Button } from "antd";
-
+import { login } from "../api";
+import { useDebounceFn } from "../../../resources/utils";
 import "./style.css";
 
 const FormItem = Form.Item;
@@ -12,6 +13,21 @@ const formItemLayout = {
 
 const ModifyPwd = () => {
   const [form] = Form.useForm();
+  const userPhone = localStorage.getItem("phone");
+  const [isTrue, setIsTrue] = useState(false);
+
+  const getPassword = async (params) => {
+    const { data } = await login(params);
+    setIsTrue(data.code === 0);
+  };
+
+  const onPasswordChange = useDebounceFn((value) => {
+    const params = {
+      userPhone,
+      userPassword: value.target.value,
+    };
+    getPassword(params);
+  }, 1000);
 
   const onSubmit = (value) => {
     console.log(value);
@@ -32,7 +48,7 @@ const ModifyPwd = () => {
             name="originalPassword"
             label="原密码"
           >
-            <Input placeholder="请输入原密码" />
+            <Input onChange={onPasswordChange} placeholder="请输入原密码" />
           </FormItem>
           <FormItem
             {...formItemLayout}
@@ -45,7 +61,7 @@ const ModifyPwd = () => {
             name="newPassword"
             label="新密码"
           >
-            <Input placeholder="请输入新密码" />
+            <Input disabled={!isTrue} placeholder="请输入新密码" />
           </FormItem>
           <FormItem
             {...formItemLayout}
@@ -58,7 +74,7 @@ const ModifyPwd = () => {
             name="confirm"
             label="确认新密码"
           >
-            <Input placeholder="请确认新密码" />
+            <Input disabled={!isTrue} placeholder="请确认新密码" />
           </FormItem>
 
           <div className="mod-btn-wrap">

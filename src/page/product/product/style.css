@@ -3,10 +3,14 @@
   padding: 16px;
 }
 .form-btn-wrap {
-  text-align: center;
+  display: flex;
+  justify-content: flex-end;
 }
-.form-btn-wrap button {
-  margin: 0 8px;
+
+.btn-wrap-flex {
+  width: 150px;
+  display: flex;
+  justify-content: space-between;
 }
 
 .product-edit-table {

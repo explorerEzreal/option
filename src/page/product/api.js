@@ -101,3 +101,54 @@ export async function editProduct(params) {
 
   return data;
 }
+
+/**
+ * @description 删除商品
+ * @returns {Object}
+ */
+export async function deleteProduct(params) {
+  let data = {};
+  await request({
+    url: "/oprate/deleteProduct",
+    method: "post",
+    data: params,
+  }).then((res) => {
+    data = res;
+  });
+
+  return data;
+}
+
+/**
+ * @description 删除商品
+ * @returns {Object}
+ */
+export async function getProductInfo(params) {
+  let data = {};
+  await request({
+    url: "/oprate/getProductInfo",
+    method: "post",
+    data: params,
+  }).then((res) => {
+    data = res;
+  });
+
+  return data;
+}
+
+/**
+ * @description 修改商品参数
+ * @returns {Object}
+ */
+export async function editProductInfo(params) {
+  let data = {};
+  await request({
+    url: "/oprate/editProductInfo",
+    method: "post",
+    data: params,
+  }).then((res) => {
+    data = res;
+  });
+
+  return data;
+}

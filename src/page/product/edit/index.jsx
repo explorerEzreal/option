@@ -1,9 +1,23 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { Form, Input, InputNumber, Button, Cascader, Select } from "antd";
+import {
+  Form,
+  Input,
+  InputNumber,
+  Button,
+  Cascader,
+  Select,
+  message,
+} from "antd";
 import VideoCard from "../components/videoCard";
-import { getClassfy, getBrand, addProduct } from "../api";
-// import { getTagUserNum } from "./api";
+import {
+  getClassfy,
+  getBrand,
+  addProduct,
+  getProductInfo,
+  editProductInfo,
+} from "../api";
+import Avatar from "../../../components/avatar/Avatar";
 import "./style.css";
 
 const FormItem = Form.Item;
@@ -25,13 +39,56 @@ const ProductEdit = () => {
 
   const onAddProduct = async (params) => {
     const { data } = await addProduct(params);
+    console.log(data);
+    if (data?.code !== 0) {
+      message.error(data.mse || "系统错误");
+      return;
+    }
+    histroy("/Product");
+  };
+
+  const getDetail = async (id) => {
+    const params = {
+      id,
+    };
+    const { data } = await getProductInfo(params);
+
+    if (data.code !== 0) {
+      message.error("系统错误");
+      return;
+    }
+    const proInfo = JSON.parse(data.data);
+
+    let detailData = proInfo[0].fields || {};
+    console.log(detailData);
+
+    detailData = {
+      ...detailData,
+      classfy: detailData.classfy.split(","),
+    };
+    form.setFieldsValue({ ...detailData });
+    setDetail(detailData);
+  };
+
+  const onEditProduc = async (params) => {
+    const { data } = await editProductInfo(params);
+    if (data?.code !== 0) {
+      message.error(data.mse || "系统错误");
+      return;
+    }
+    histroy("/Product");
   };
 
   const onFinish = (value) => {
-    const params = {
+    let params = {
       ...value,
       classfy: value.classfy.join(","),
     };
+
+    if (id) {
+      onEditProduc({ ...params, id });
+      return;
+    }
     onAddProduct(params);
   };
 
@@ -42,7 +99,7 @@ const ProductEdit = () => {
 
   // 图片发生变化
   const onUrlChange = (e) => {
-    setDetail({ ...detail, frontUrl: e.target.value });
+    setDetail({ ...detail, frontUrl: e });
   };
 
   // 商品描述发生变化
@@ -57,7 +114,7 @@ const ProductEdit = () => {
 
   // 取消回调
   const onFormCancel = () => {
-    histroy("/productList");
+    histroy("/Product");
   };
 
   const onGetClassfy = async () => {
@@ -97,11 +154,12 @@ const ProductEdit = () => {
   };
 
   useEffect(() => {
+    if (id) {
+      getDetail(id);
+    }
     onGetClassfy();
     onGetBrandList();
   }, []);
-
-  // console.log(id, "id");
 
   return (
     <div className="c-product-edit">
@@ -150,20 +208,6 @@ const ProductEdit = () => {
           </FormItem>
 
           <FormItem
-            name="frontUrl"
-            label="图片链接"
-            {...formItemLayout}
-            rules={[
-              {
-                required: true,
-                message: "请输入图片链接",
-              },
-            ]}
-          >
-            <Input onChange={onUrlChange} placeholder="请输入图片链接" />
-          </FormItem>
-
-          <FormItem
             name="describe"
             label="商品描述"
             {...formItemLayout}
@@ -195,6 +239,20 @@ const ProductEdit = () => {
             />
           </FormItem>
 
+          <FormItem
+            name="frontUrl"
+            label="上传图片"
+            {...formItemLayout}
+            rules={[
+              {
+                required: true,
+                message: "请输入图片链接",
+              },
+            ]}
+          >
+            <Avatar value={detail.imgUrl} onChange={onUrlChange} />
+          </FormItem>
+
           <Form.Item
             wrapperCol={{
               span: 24,
@@ -209,6 +267,7 @@ const ProductEdit = () => {
       </div>
       <div className="edit-video">
         <VideoCard
+          isShowbtn={false}
           imgUrl={detail?.frontUrl || ""}
           title={detail?.name || ""}
           tags={detail?.describe || ""}
